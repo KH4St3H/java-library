@@ -117,14 +117,27 @@ public class Database {
         }
     }
     public static User login(String username, String password){
-        ResultSet rs = execQuery("SELECT first_name, last_name, admin from users WHERE (username = ? AND password = ?)", username, password);
+        // ResultSet rs = execQuery("SELECT first_name, last_name, admin from users WHERE (username = ? AND password = ?)", username, password);
+        String[] args = {username, password};
 
-        if(rs == null)
-            return null;
+        var conn = Database.connect();
+        try (var stmt = conn.prepareStatement("SELECT first_name, last_name, admin from users WHERE (username = ? AND password = ?)")) {
+            for (int i = 0; i <args.length; i++) {
+                stmt.setString(i+1, args[i]);
+            }
+            var rs = stmt.executeQuery();
+            rs.next();
+            try{
 
-        try{
-            return new User(username, rs.getString("first_name"), rs.getString("first_name"), rs.getBoolean("admin"));
-        } catch (SQLException e){
+                String firstName = rs.getString("first_name");
+                System.out.println(firstName);
+                return new User(username, firstName, rs.getString("first_name"), rs.getBoolean("admin"));
+            
+            } catch (SQLException e){
+                System.out.println(e.getMessage());
+                return null;
+            }
+        } catch(SQLException e){
             return null;
         }
         
