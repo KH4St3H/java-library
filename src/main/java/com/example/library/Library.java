@@ -24,6 +24,7 @@ public class Library extends Application {
 
     public void start(Stage Log_in) throws FileNotFoundException {
         menu();
+        Database.createTables();
     }
 
     private static String hashPassword(String password){
@@ -163,7 +164,7 @@ public class Library extends Application {
                     alert.showAndWait();
                 } else if (user.admin){
                         try {
-                            admin.admin_page(Log_in);
+                            admin.admin_page(Log_in, name);
                         } catch (FileNotFoundException e) {
                             throw new RuntimeException(e);
                         }

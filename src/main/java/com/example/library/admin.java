@@ -15,25 +15,12 @@ import javafx.stage.Stage;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class admin {
-    public static ArrayList<String> admin_data = file.reader("src/main/resources/datas/admin.txt");
-    public static String username = admin_data.get(0);
-    public static String password = admin_data.get(1);
 
-    public static void admin_page(Stage admin_panel) throws FileNotFoundException {
-        try {
-            FileWriter save = new FileWriter("src/main/resources/datas/admin.txt");
-            save.write(username + "\n");
-            save.write(password);
-            save.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+public class admin {
+    public static void admin_page(Stage admin_panel, String username) throws FileNotFoundException {
         Image background = new Image(new FileInputStream("src/main/resources/images/admin.png"));
         Rectangle rec = new Rectangle(1280, 720, new ImagePattern(background));
 
@@ -833,27 +820,62 @@ public class admin {
 
         TextField book_name = new TextField();
         book_name.setPromptText("book name");
-        book_name.setLayoutY(55);
-        book_name.setLayoutX(100);
-        book_name.setMinSize(400, 100);
-        book_name.setMaxSize(400, 100);
+        book_name.setLayoutY(20);
+        book_name.setLayoutX(20);
+        book_name.setMinSize(200, 50);
+        book_name.setMaxSize(200, 50);
         book_name.setStyle("""
             -fx-background-color: #ffffff;
             -fx-background-radius: 5px;
             -fx-text-fill: #000000;
-            -fx-font-size: 30px;
+            -fx-font-size: 15px;
             -fx-font-weight: bold;
             -fx-border-color: #000000;
             -fx-border-width: 5px;
             -fx-border-radius: 5px;
                 """);
-        book_name.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
+
+        TextField book_author = new TextField();
+        book_author.setPromptText("Author");
+        book_author.setLayoutY(20);
+        book_author.setLayoutX(240);
+        book_author.setMinSize(200, 50);
+        book_author.setMaxSize(200, 50);
+        book_author.setStyle("""
+            -fx-background-color: #ffffff;
+            -fx-background-radius: 5px;
+            -fx-text-fill: #000000;
+            -fx-font-size: 15px;
+            -fx-font-weight: bold;
+            -fx-border-color: #000000;
+            -fx-border-width: 5px;
+            -fx-border-radius: 5px; """);
+
+        TextField book_count = new TextField("0");
+        book_count.setPromptText("Count");
+        book_count.setLayoutY(20);
+        book_count.setLayoutX(460);
+        book_count.setMinSize(100, 50);
+        book_count.setMaxSize(100, 50);
+        book_count.setStyle("""
+            -fx-type: number;
+            -fx-background-color: #ffffff;
+            -fx-background-radius: 5px;
+            -fx-text-fill: #000000;
+            -fx-font-size: 15px;
+            -fx-font-weight: bold;
+            -fx-border-color: #000000;
+            -fx-border-width: 5px;
+            -fx-border-radius: 5px;
+                """);
+        book_count.addEventFilter(KeyEvent.KEY_TYPED, new EventHandler<KeyEvent>() {
             @Override public void handle(KeyEvent keyEvent) {
-                if ("|".contains(keyEvent.getCharacter())) {
+                if (!"1234567890".contains(keyEvent.getCharacter())) {
                     keyEvent.consume();
                 }
             }
         });
+
 
         ToggleGroup cat = new ToggleGroup();
 
@@ -980,47 +1002,89 @@ public class admin {
         ok.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                int count = 0;
                 if (book_name.getText().equals("")){
                     Alert Failed = new Alert(Alert.AlertType.ERROR, "Book name can't be empty!");
                     Failed.setTitle("add book");
                     Failed.setHeaderText("Failed!");
                     Failed.showAndWait();
-                }else if (!file.check_existance("src/main/resources/datas/books.txt", book_name.getText(), 1)){
-                    String category;
+                    return;
+                }
+                if (book_author.getText().equals("")){
+                    Alert Failed = new Alert(Alert.AlertType.ERROR, "Author can't be empty!");
+                    Failed.setTitle("add book");
+                    Failed.setHeaderText("Failed!");
+                    Failed.showAndWait();
+                    return;
+                }
+                if (book_count.getText().equals("")){
+                    Alert Failed = new Alert(Alert.AlertType.ERROR, "Book count can't be empty!");
+                    Failed.setTitle("add book");
+                    Failed.setHeaderText("Failed!");
+                    Failed.showAndWait();
+                    return;
+                }
+                try{
+                   count = Integer.parseInt(book_count.getText());
+                } catch (Exception e){
+                    Alert Failed = new Alert(Alert.AlertType.ERROR, "Book count should be all numbers");
+                    Failed.setTitle("add book");
+                    Failed.setHeaderText("Failed!");
+                    Failed.showAndWait();
+                    return;
+                }
+                if(count > 1000){
+                    Alert Failed = new Alert(Alert.AlertType.ERROR, "Way too many books");
+                    Failed.setTitle("add book");
+                    Failed.setHeaderText("Failed!");
+                    Failed.showAndWait();
+                    return;
+                }
+                if(count < 0){
+                    Alert Failed = new Alert(Alert.AlertType.ERROR, "Can't have negative number of books");
+                    Failed.setTitle("add book");
+                    Failed.setHeaderText("Failed!");
+                    Failed.showAndWait();
+                    return;
+                }
 
-                    if (computer.isSelected()){
-                        category = "Computer";
-                    } else if (math.isSelected()) {
-                        category = "Mathematics";
-                    } else if (physic.isSelected()) {
-                        category = "Physics";
-                    } else if (chemistry.isSelected()) {
-                        category = "Chemistry";
-                    } else if (electricity.isSelected()) {
-                        category = "Electricity";
-                    }else {
-                        category = "General";
-                    }
+                String category;
 
-                    books.AddBook(book_name.getText(), category);
+                if (computer.isSelected()){
+                    category = "Computer";
+                } else if (math.isSelected()) {
+                    category = "Mathematics";
+                } else if (physic.isSelected()) {
+                    category = "Physics";
+                } else if (chemistry.isSelected()) {
+                    category = "Chemistry";
+                } else if (electricity.isSelected()) {
+                    category = "Electricity";
+                }else {
+                    category = "General";
+                }
 
-                    form.close();
+                // books.AddBook(book_name.getText(), category);
+                boolean status = Database.addBook(book_name.getText(), book_author.getText(), category, count);
 
+                if(status){
                     Alert successful = new Alert(Alert.AlertType.INFORMATION, "Book added successfully.");
                     successful.setTitle("add book");
                     successful.setHeaderText("Done!");
                     successful.showAndWait();
-                }else {
-                    Alert Failed = new Alert(Alert.AlertType.ERROR, "Sorry, Book with this name already exists!");
+                    form.close();
+                }else{
+                    Alert Failed = new Alert(Alert.AlertType.ERROR, "Something went wrong");
                     Failed.setTitle("add book");
                     Failed.setHeaderText("Failed!");
                     Failed.showAndWait();
+                    return;
                 }
             }
         });
 
 
-        Group root = new Group(r, computer, math, physic, chemistry, electricity, general, book_name, ok, cancel);
+        Group root = new Group(r, computer, math, physic, chemistry, electricity, general, book_name, book_author, book_count, ok, cancel);
         Scene add = new Scene(root);
         form.setScene(add);
         form.initModality(Modality.APPLICATION_MODAL);

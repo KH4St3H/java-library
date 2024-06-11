@@ -26,19 +26,23 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class books {
-    private String id;
+    private int id;
     private String name;
     private String category;
-    private String status;
+    private String author;
+    private int available;
+    private int lent;
 
-    public books(String Id, String Name, String Category, String Status){
+    public books(int Id, String Name, String author, String Category, int available, int lent){
         this.category = Category;
         this.name = Name;
+        this.author = author;
         this.id = Id;
-        this.status = Status;
+        this.available = available;
+        this.lent = lent;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
@@ -50,8 +54,16 @@ public class books {
         return category;
     }
 
-    public String getStatus() {
-        return status;
+    public String getAuthor() {
+        return author;
+    }
+
+    public int getAvailable(){
+        return available;
+    }
+
+    public int getLent(){
+        return lent;
     }
 
 
@@ -149,31 +161,41 @@ public class books {
         name.setStyle("""
                 -fx-alignment: CENTER;
                 """);
+        TableColumn author = new TableColumn<>("Author");
+        name.setStyle("""
+                -fx-alignment: CENTER;
+                """);
         TableColumn category = new TableColumn<>("Category");
         category.setStyle("""
                 -fx-alignment: CENTER;
                 """);
-        TableColumn status = new TableColumn<>("Status");
-        status.setStyle("""
+        TableColumn available = new TableColumn<>("Available");
+        available.setStyle("""
+                -fx-alignment: CENTER;
+                """);
+        TableColumn lent = new TableColumn<>("Total Lent");
+        lent.setStyle("""
                 -fx-alignment: CENTER;
                 """);
 
-        Id.setCellValueFactory(new PropertyValueFactory<books, String>("id"));
+        Id.setCellValueFactory(new PropertyValueFactory<books, Integer>("id"));
         name.setCellValueFactory(new PropertyValueFactory<books, String>("name"));
+        author.setCellValueFactory(new PropertyValueFactory<books, String>("author"));
         category.setCellValueFactory(new PropertyValueFactory<books, String>("category"));
-        status.setCellValueFactory(new PropertyValueFactory<books, String>("status"));
+        available.setCellValueFactory(new PropertyValueFactory<books, Integer>("available"));
+        lent.setCellValueFactory(new PropertyValueFactory<books, Integer>("lent"));
 
-        Id.prefWidthProperty().bind(all.widthProperty().multiply(0.2));
-        name.prefWidthProperty().bind(all.widthProperty().multiply(0.4));
-        category.prefWidthProperty().bind(all.widthProperty().multiply(0.2));
-        status.prefWidthProperty().bind(all.widthProperty().multiply(0.2));
+        // Id.prefWidthProperty().bind(all.widthProperty().multiply(0.2));
+        // name.prefWidthProperty().bind(all.widthProperty().multiply(0.4));
+        // category.prefWidthProperty().bind(all.widthProperty().multiply(0.2));
+        // status.prefWidthProperty().bind(all.widthProperty().multiply(0.2));
 
-        Id.setResizable(false);
-        name.setResizable(false);
-        category.setResizable(false);
-        status.setResizable(false);
+        // Id.setResizable(false);
+        // name.setResizable(false);
+        // category.setResizable(false);
+        // status.setResizable(false);
 
-        all.getColumns().addAll(Id, name, category, status);
+        all.getColumns().addAll(Id, name, author, category, available, lent);
 
         all.setLayoutX(375);
         all.setLayoutY(210);
@@ -183,17 +205,18 @@ public class books {
                 -fx-background-color: unset;
                 """);
 
-        ArrayList<String> data = file.reader("src/main/resources/datas/books.txt");
-        ObservableList<books> list = FXCollections.observableArrayList();
-        for (int i = 0; i < data.size(); i++) {
-            String stat;
-            String[] n = data.get(i).split("\\|");
-            if (file.check_existance("src/main/resources/datas/borrowed books.txt",n[1], 0)){
-                stat = "unavailable";
-            }else stat = "available";
-            list.add(new books(n[0], n[1], n[2], stat));
-        }
-        all.setItems(list);
+        
+        // ArrayList<String> data = file.reader("src/main/resources/datas/books.txt");
+        // ObservableList<books> list = FXCollections.observableArrayList();
+        // for (int i = 0; i < data.size(); i++) {
+        //     String stat;
+        //     String[] n = data.get(i).split("\\|");
+        //     if (file.check_existance("src/main/resources/datas/borrowed books.txt",n[1], 0)){
+        //         stat = "unavailable";
+        //     }else stat = "available";
+        //     list.add(new books(n[0], n[1], n[2], stat));
+        // }
+        all.setItems(Database.getAllBooks());
         return all;
     }
 
