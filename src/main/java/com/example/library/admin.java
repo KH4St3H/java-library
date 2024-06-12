@@ -784,13 +784,19 @@ public class admin {
                             lev = "P.H.D";
                         }
 
-                        Users.AddUser(stdnumber.getText(), name.getText(), lev, dep, password.getText());
-                        form.close();
+                        boolean success = Database.addUser(stdnumber.getText(), name.getText(), lev, dep, password.getText());
 
+                        if(success){
                         Alert successful = new Alert(Alert.AlertType.INFORMATION, "User added successfully.");
-                        successful.setTitle("add user");
-                        successful.setHeaderText("Done!");
-                        successful.show();
+                            successful.setTitle("add user");
+                            successful.setHeaderText("Done!");
+                            successful.show();
+                        } else {
+                            Alert alert = new Alert(Alert.AlertType.ERROR, "Something went wrong!");
+                            alert.setHeaderText("Failed!");
+                            alert.setTitle("add user");
+                            alert.showAndWait();
+                        }
                     }
                 }else {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Sorry, user with this student number already exists!");

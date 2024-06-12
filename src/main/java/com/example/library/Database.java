@@ -50,7 +50,7 @@ public class Database {
         return hashtext;
     }
 
-    private static void seedDB(){
+    public static void seedDB(){
         // create admin
         execQuery("INSERT INTO users(username, first_name, last_name, password, admin) VALUES(" +
                 "'admin', 'Mehrshad', 'Firouzian', ?, TRUE)", hashPassword("admin"));
@@ -111,6 +111,8 @@ public class Database {
                 "    first_name VARCHAR(255) NOT NULL," +
                 "    last_name VARCHAR(30) NOT NULL," +
                 "    password VARCHAR(32) NOT NULL UNIQUE," +
+                "    department VARCHAR(30)," +
+                "    level VARCHAR(30)," +
                 "    admin BOOLEAN NOT NULL DEFAULT FALSE," +
                 "    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP" +
                 ");";
@@ -134,6 +136,28 @@ public class Database {
         }
     }
 
+     public static boolean addUser(String stdNumber, String fullName, String level, String department, String password){
+        String[] name = fullName.split(" ", 2);
+        String hashedPassword = hashPassword(password);
+
+        var conn = Database.connect();
+        try (var stmt = conn.prepareStatement("INSERT INTO users(username, first_name, last_name, password, department, level) VALUES(?, ?, ?, ?, ?, ?);")) {
+            stmt.setString(1, stdNumber);
+            stmt.setString(2, name[0]);
+            stmt.setString(3, name[1]);
+            stmt.setString(4, hashPassword(password));
+            stmt.setString(5, department);
+            stmt.setString(6, level);
+            stmt.execute();
+
+            return true;
+        } catch(SQLException e){
+            System.out.println(e.getMessage());
+            return false;
+        }
+        
+    }
+
      public static boolean addBook(String title, String author, String category, int count){
         String[] args = {title, author, category};
 
@@ -143,7 +167,9 @@ public class Database {
                 stmt.setString(i+1, args[i]);
             }
             stmt.setInt(4, count);
-            return stmt.execute();
+            stmt.execute();
+
+            return true;
         } catch(SQLException e){
             System.out.println(e.getMessage());
             return false;

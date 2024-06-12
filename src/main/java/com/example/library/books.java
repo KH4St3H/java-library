@@ -67,16 +67,6 @@ public class books {
     }
 
 
-    public static void AddBook(String book_name, String book_category){
-        try {
-            FileWriter save = new FileWriter("library/src/main/resources/datas/books.txt", true);
-            save.write(Id_generator() + "|" + book_name + "|" + book_category + "\n");
-            save.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static int Id_generator(){
         Random ran = new Random();
         return ran.nextInt(899999) + 100000;
