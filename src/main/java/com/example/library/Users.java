@@ -66,6 +66,9 @@ public class Users {
     }
 
     public static TableView user_table(){
+        return user_table_with_value(Database.getAllUsers());
+    }
+    public static TableView user_table_with_value(ObservableList<Users> all_users){
         TableView user_table = new TableView<>();
 
         TableColumn firstname = new TableColumn<>("First Name");
@@ -112,7 +115,7 @@ public class Users {
                 """);
 
 
-        user_table.setItems(Database.getAllUsers());
+        user_table.setItems(all_users);
         return user_table;
     }
 

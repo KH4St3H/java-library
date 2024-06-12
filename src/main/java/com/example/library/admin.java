@@ -281,88 +281,6 @@ public class admin {
             }
         });
 
-        Button refresh = new Button("refresh");
-        refresh.setLayoutX(881);
-        refresh.setLayoutY(656);
-        refresh.setMaxSize(100, 40);
-        refresh.setMinSize(100, 40);
-        refresh.setStyle("""
-            -fx-background-color: unset;
-            -fx-background-radius: 25px;
-            -fx-text-fill: #000000;
-            -fx-font-size: 15px;
-            -fx-font-weight: bold;
-            -fx-border-color: #000000;
-            -fx-border-width: 3px;
-            -fx-border-radius: 25px;
-                """);
-        refresh.setCursor(Cursor.HAND);
-        refresh.setOnMouseEntered(mouseEvent-> {
-            refresh.setStyle("""
-                -fx-background-color: #19d140;
-                -fx-background-radius: 20px;
-                -fx-text-fill: #ffffff;
-                -fx-font-size: 15px;
-                -fx-font-weight: bold;
-                -fx-border-color: #ffffff;
-                -fx-border-width: 4px;
-                -fx-border-radius: 20px;
-            """);
-        });
-        refresh.setOnMouseExited(mouseEvent-> {
-            refresh.setStyle("""
-                -fx-background-color: unset;
-                -fx-background-radius: 25px;
-                -fx-text-fill: #000000;
-                -fx-font-size: 15px;
-                -fx-font-weight: bold;
-                -fx-border-color: #000000;
-                -fx-border-width: 3px;
-                -fx-border-radius: 25px;
-            """);
-        });
-
-        Button remove_all = new Button("remove all");
-        remove_all.setLayoutX(753);
-        remove_all.setLayoutY(656);
-        remove_all.setMaxSize(100, 40);
-        remove_all.setMinSize(100, 40);
-        remove_all.setStyle("""
-            -fx-background-color: unset;
-            -fx-background-radius: 25px;
-            -fx-text-fill: #000000;
-            -fx-font-size: 13px;
-            -fx-font-weight: bold;
-            -fx-border-color: #000000;
-            -fx-border-width: 3px;
-            -fx-border-radius: 25px;
-                """);
-        remove_all.setCursor(Cursor.HAND);
-        remove_all.setOnMouseEntered(mouseEvent-> {
-            remove_all.setStyle("""
-                -fx-background-color: #c30000;
-                -fx-background-radius: 20px;
-                -fx-text-fill: #ffffff;
-                -fx-font-size: 13px;
-                -fx-font-weight: bold;
-                -fx-border-color: #ffffff;
-                -fx-border-width: 4px;
-                -fx-border-radius: 20px;
-            """);
-        });
-        remove_all.setOnMouseExited(mouseEvent-> {
-            remove_all.setStyle("""
-                -fx-background-color: unset;
-                -fx-background-radius: 25px;
-                -fx-text-fill: #000000;
-                -fx-font-size: 13px;
-                -fx-font-weight: bold;
-                -fx-border-color: #000000;
-                -fx-border-width: 3px;
-                -fx-border-radius: 25px;
-            """);
-        });
-
         Button remove = new Button("remove");
         remove.setLayoutX(623);
         remove.setLayoutY(656);
@@ -403,6 +321,105 @@ public class admin {
                 -fx-border-radius: 25px;
             """);
         });
+
+        Button refresh = new Button("refresh");
+        refresh.setLayoutX(753);
+        refresh.setLayoutY(656);
+        refresh.setMaxSize(100, 40);
+        refresh.setMinSize(100, 40);
+        refresh.setStyle("""
+            -fx-background-color: unset;
+            -fx-background-radius: 25px;
+            -fx-text-fill: #000000;
+            -fx-font-size: 15px;
+            -fx-font-weight: bold;
+            -fx-border-color: #000000;
+            -fx-border-width: 3px;
+            -fx-border-radius: 25px;
+                """);
+        refresh.setCursor(Cursor.HAND);
+        refresh.setOnMouseEntered(mouseEvent-> {
+            refresh.setStyle("""
+                -fx-background-color: #19d140;
+                -fx-background-radius: 20px;
+                -fx-text-fill: #ffffff;
+                -fx-font-size: 15px;
+                -fx-font-weight: bold;
+                -fx-border-color: #ffffff;
+                -fx-border-width: 4px;
+                -fx-border-radius: 20px;
+            """);
+        });
+        refresh.setOnMouseExited(mouseEvent-> {
+            refresh.setStyle("""
+                -fx-background-color: unset;
+                -fx-background-radius: 25px;
+                -fx-text-fill: #000000;
+                -fx-font-size: 15px;
+                -fx-font-weight: bold;
+                -fx-border-color: #000000;
+                -fx-border-width: 3px;
+                -fx-border-radius: 25px;
+            """);
+        });
+
+        Button search_button = new Button("search");
+        search_button.setLayoutX(881);
+        search_button.setLayoutY(656);
+        search_button.setMaxSize(100, 40);
+        search_button.setMinSize(100, 40);
+        search_button.setStyle("""
+            -fx-background-color: unset;
+            -fx-background-radius: 25px;
+            -fx-text-fill: #000000;
+            -fx-font-size: 13px;
+            -fx-font-weight: bold;
+            -fx-border-color: #000000;
+            -fx-border-width: 3px;
+            -fx-border-radius: 25px;
+                """);
+        search_button.setCursor(Cursor.HAND);
+        search_button.setOnMouseEntered(mouseEvent-> {
+            search_button.setStyle("""
+                -fx-background-color: #c30000;
+                -fx-background-radius: 20px;
+                -fx-text-fill: #ffffff;
+                -fx-font-size: 13px;
+                -fx-font-weight: bold;
+                -fx-border-color: #ffffff;
+                -fx-border-width: 4px;
+                -fx-border-radius: 20px;
+            """);
+        });
+        search_button.setOnMouseExited(mouseEvent-> {
+            search_button.setStyle("""
+                -fx-background-color: unset;
+                -fx-background-radius: 25px;
+                -fx-text-fill: #000000;
+                -fx-font-size: 13px;
+                -fx-font-weight: bold;
+                -fx-border-color: #000000;
+                -fx-border-width: 3px;
+                -fx-border-radius: 25px;
+            """);
+        });
+
+        TextField search = new TextField();
+        search.setPromptText("Enter book title");
+        search.setLayoutX(1000);
+        search.setLayoutY(656);
+        search.setMinSize(200, 50);
+        search.setMaxSize(200, 50);
+        search.setStyle("""
+            -fx-background-color: #ffffff;
+            -fx-background-radius: 5px;
+            -fx-text-fill: #000000;
+            -fx-font-size: 15px;
+            -fx-font-weight: bold;
+            -fx-border-color: #000000;
+            -fx-border-width: 5px;
+            -fx-border-radius: 5px;
+                """);
 
         add_users.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
@@ -452,7 +469,7 @@ public class admin {
             @Override
             public void handle(MouseEvent event) {
                 which_page.set("all books");
-                Group root = new Group(rec, name, books, users, Borrowed_books, add_users, add_books, lend_books, return_books, log_out, com.example.library.books.all_books_table(), remove, remove_all, refresh);
+                Group root = new Group(rec, name, books, users, Borrowed_books, add_users, add_books, lend_books, return_books, log_out, com.example.library.books.all_books_table(), remove, search_button, refresh, search);
                 Scene all_book_chart = new Scene(root);
                 admin_panel.setScene(all_book_chart);
             }
@@ -471,7 +488,7 @@ public class admin {
             @Override
             public void handle(MouseEvent event) {
                 which_page.set("users");
-                Group root = new Group(rec, name, books, users, Borrowed_books, add_users, add_books, lend_books, return_books, log_out, Users.user_table(), remove, remove_all, refresh);
+                Group root = new Group(rec, name, books, users, Borrowed_books, add_users, add_books, lend_books, return_books, log_out, Users.user_table(), remove, search_button, refresh, search);
                 Scene users_chart = new Scene(root);
                 admin_panel.setScene(users_chart);
             }
@@ -481,24 +498,30 @@ public class admin {
             @Override
             public void handle(MouseEvent event) {
                 if (which_page.get().equals("all books")){
-                    Group root = new Group(rec, name, books, users, Borrowed_books, add_users, add_books, lend_books, return_books, log_out, com.example.library.books.all_books_table(), remove, remove_all, refresh);
+                    Group root = new Group(rec, name, books, users, Borrowed_books, add_users, add_books, lend_books, return_books, log_out, com.example.library.books.all_books_table(), remove, search_button, refresh, search);
                     Scene all_book_chart = new Scene(root);
                     admin_panel.setScene(all_book_chart);
                 } else if (which_page.get().equals("users")) {
-                    Group root = new Group(rec, name, books, users, Borrowed_books, add_users, add_books, lend_books, return_books, log_out, Users.user_table(), remove, remove_all, refresh);
+                    Group root = new Group(rec, name, books, users, Borrowed_books, add_users, add_books, lend_books, return_books, log_out, Users.user_table(), remove, search_button, refresh, search);
                     Scene users_chart = new Scene(root);
                     admin_panel.setScene(users_chart);
                 }
             }
         });
 
-        remove_all.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+        search_button.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                String value = search.getText();
                 if (which_page.get().equals("all books")){
-                    com.example.library.books.resetall();
+                    which_page.set("all books");
+                    Group root = new Group(rec, name, books, users, Borrowed_books, add_users, add_books, lend_books, return_books, log_out, com.example.library.books.all_books_with_value(Database.searchBooks(value)), remove, search_button, refresh, search);
+                    Scene all_book_chart = new Scene(root);
+                    admin_panel.setScene(all_book_chart);
                 } else if (which_page.get().equals("users")) {
-                    Users.reset_all();
+                    Group root = new Group(rec, name, books, users, Borrowed_books, add_users, add_books, lend_books, return_books, log_out, Users.user_table_with_value(Database.searchUsers(value)), remove, search_button, refresh);
+                    Scene users_chart = new Scene(root);
+                    admin_panel.setScene(users_chart);
                 }
             }
         });

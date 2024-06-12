@@ -25,7 +25,11 @@ public class Library extends Application {
     public void start(Stage Log_in) throws FileNotFoundException {
         menu();
         Database.createTables();
-        Database.seedDB();
+        try {
+            Database.seedDB();
+        }catch (Exception e){
+            System.out.println("error");
+        }
     }
 
     private static String hashPassword(String password){

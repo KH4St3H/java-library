@@ -15,7 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Database {
-    private static final String url = "jdbc:postgresql://localhost:5432/library";
+    private static final String url = "jdbc:postgresql://192.168.41.125:5432/library";
     private static final String username = "library-test";
     private static final String password = "library-test";
     private static Connection connect(){
@@ -213,6 +213,43 @@ public class Database {
         
     }
 
+    public static ObservableList<Users> searchUsers(String username){
+        var sql = "SELECT" +
+                "    B.*, " +
+                "SUM(case when O.return_date is null and O.book_id is not null then 1 else 0 end) AS borrowed" +
+                "   FROM " +
+                "        users B" +
+                "    LEFT JOIN " +
+                "        borrow  O" +
+                "    ON " +
+                "        O.user_id = B.username" +
+                "    where (" + "B.username like ?"+
+                "       AND B.admin = FALSE)" +
+                "   GROUP BY " +
+                "   B.id ;";
+
+        ObservableList<Users> list = FXCollections.observableArrayList();
+        var conn = Database.connect();
+        try (var stmt = conn.prepareStatement(sql)) {
+            username = "%" + username + "%";
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                try{
+                    list.add(new Users(rs.getString("first_name"), rs.getString("last_name"),
+                            rs.getString("username"), rs.getString("level"), rs.getString("department"), rs.getInt("borrowed")));
+
+                } catch (SQLException e){
+                    System.out.println(e.getMessage());
+                }
+            }
+        } catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return list;
+
+    }
+
     public static boolean returnBook(String username, String book_id){
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
          var conn = Database.connect();
@@ -287,6 +324,46 @@ public class Database {
         }
         return list;
         
+    }
+
+    public static ObservableList<books> searchBooks(String title){
+        var sql = "SELECT" +
+                "    B.*, " +
+                "    SUM(case when O.return_date is null and O.book_id is not null then 1 else 0 end) AS borrowed" +
+                "   FROM " +
+                "        books  B" +
+                "    LEFT JOIN " +
+                "        borrow  O" +
+                "    ON " +
+                "        O.book_id = B.id" +
+                "    WHERE " +
+                "        B.title like ? "+
+                "   GROUP BY " +
+                "   B.id ;";
+
+        ObservableList<books> list = FXCollections.observableArrayList();
+        var conn = Database.connect();
+        try (var stmt = conn.prepareStatement(sql)) {
+            title = "%" + title + "%";
+            stmt.setString(1, title);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next()){
+                try{
+                    int totalCount = rs.getInt("total_count");
+                    int borrowed = rs.getInt("borrowed");
+                    System.out.println();
+                    list.add(new books(rs.getInt("id"), rs.getString("title"),
+                            rs.getString("author"), rs.getString("category"), totalCount - borrowed, borrowed));
+
+                } catch (SQLException e){
+                    System.out.println(e.getMessage());
+                }
+            }
+        } catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return list;
+
     }
     
     public static String lendBook(int bookId, String username){

@@ -140,7 +140,10 @@ public class books {
             throw new RuntimeException(e);
         }
     }
-    public static TableView all_books_table(){
+    public static TableView all_books_table() {
+        return all_books_with_value(Database.getAllBooks());
+    }
+    public static TableView all_books_with_value(ObservableList<books> all_books){
         TableView all = new TableView<>();
 
         TableColumn Id = new TableColumn<>("Id");
@@ -175,16 +178,6 @@ public class books {
         available.setCellValueFactory(new PropertyValueFactory<books, Integer>("available"));
         lent.setCellValueFactory(new PropertyValueFactory<books, Integer>("lent"));
 
-        // Id.prefWidthProperty().bind(all.widthProperty().multiply(0.2));
-        // name.prefWidthProperty().bind(all.widthProperty().multiply(0.4));
-        // category.prefWidthProperty().bind(all.widthProperty().multiply(0.2));
-        // status.prefWidthProperty().bind(all.widthProperty().multiply(0.2));
-
-        // Id.setResizable(false);
-        // name.setResizable(false);
-        // category.setResizable(false);
-        // status.setResizable(false);
-
         all.getColumns().addAll(Id, name, author, category, available, lent);
 
         all.setLayoutX(375);
@@ -195,18 +188,7 @@ public class books {
                 -fx-background-color: unset;
                 """);
 
-        
-        // ArrayList<String> data = file.reader("src/main/resources/datas/books.txt");
-        // ObservableList<books> list = FXCollections.observableArrayList();
-        // for (int i = 0; i < data.size(); i++) {
-        //     String stat;
-        //     String[] n = data.get(i).split("\\|");
-        //     if (file.check_existance("src/main/resources/datas/borrowed books.txt",n[1], 0)){
-        //         stat = "unavailable";
-        //     }else stat = "available";
-        //     list.add(new books(n[0], n[1], n[2], stat));
-        // }
-        all.setItems(Database.getAllBooks());
+        all.setItems(all_books);
         return all;
     }
 
