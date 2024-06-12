@@ -111,7 +111,7 @@ public class Database {
                 "    username VARCHAR(15) UNIQUE," +
                 "    first_name VARCHAR(255) NOT NULL," +
                 "    last_name VARCHAR(30) NOT NULL," +
-                "    password VARCHAR(32) NOT NULL UNIQUE," +
+                "    password VARCHAR(32) NOT NULL," +
                 "    department VARCHAR(30)," +
                 "    level VARCHAR(30)," +
                 "    admin BOOLEAN NOT NULL DEFAULT FALSE," +
