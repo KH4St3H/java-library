@@ -1415,14 +1415,8 @@ public class admin {
             public void handle(MouseEvent event) {
                 String name = book_name.getText();
                 String stdnum = student_number.getText();
-                boolean match = false;
-                ArrayList<String> data = file.reader("src/main/resources/datas/borrowed books.txt");
-                for (int i = 0; i < data.size(); i++) {
-                    if (stdnum.equals(data.get(i).split("\\|")[1]) && name.equals(data.get(i).split("\\|")[0])){
-                        match = true;
-                        break;
-                    }
-                }
+
+                boolean match = Database.returnBook(stdnum, name);
                 if (match){
                     books.retbook(name);
                     form.close();

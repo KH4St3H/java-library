@@ -10,6 +10,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.Timestamp;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -180,7 +181,7 @@ public class Database {
     public static ObservableList<Users> getAllUsers(){
         var sql = "SELECT" +
             "    B.*, " +
-            "    COUNT(O.book_id) AS borrowed" +
+            "    SUM(case when O.return_date is null and O.book_id is not null then 1 else 0 end) AS borrowed" +
             "   FROM " +
             "        users B" +
             "    LEFT JOIN " +
@@ -188,8 +189,7 @@ public class Database {
             "    ON " +
             "        O.user_id = B.username" +
             "    where (" +
-            "        O.return_date is NULL" +
-            "        AND B.admin = FALSE)" +
+            "        B.admin = FALSE)" +
             "   GROUP BY " +
             "   B.id ;";
 
@@ -213,6 +213,23 @@ public class Database {
         
     }
 
+    public static boolean returnBook(String username, String book_id){
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+         var conn = Database.connect();
+         try (var stmt = conn.prepareStatement("UPDATE borrow SET return_date = ? WHERE (user_id = ? AND book_id = ?);")) {
+             stmt.setTimestamp(1, timestamp);
+             stmt.setString(2, username);
+             stmt.setInt(3, Integer.parseInt(book_id));
+             stmt.execute();
+
+             return true;
+         } catch(SQLException e){
+             System.out.println("**********************");
+             System.out.println(e.getMessage());
+             return false;
+         }
+    }
+
     public static ObservableList<borrowed_books> getAllBorrowedBooks(){
         var sql = "SELECT borrow.*, books.title FROM borrow LEFT JOIN books ON books.id = borrow.book_id ORDER BY start_date";
 
@@ -223,7 +240,7 @@ public class Database {
             while(rs.next()){
                 try{
                     list.add(new borrowed_books(rs.getInt("book_id"), rs.getString("title"),
-                                rs.getString("user_id"), rs.getString("start_date"), rs.getString("return_date")));
+                            rs.getString("user_id"), rs.getString("start_date"), rs.getString("return_date")));
                 
                 } catch (SQLException e){
                     System.out.println(e.getMessage());
@@ -239,15 +256,13 @@ public class Database {
     public static ObservableList<books> getAllBooks(){
         var sql = "SELECT" +
             "    B.*, " +
-            "    COUNT(O.user_id) AS borrowed" +
+            "    SUM(case when O.return_date is null and O.book_id is not null then 1 else 0 end) AS borrowed" +
             "   FROM " +
             "        books  B" +
             "    LEFT JOIN " +
             "        borrow  O" +
             "    ON " +
             "        O.book_id = B.id" +
-            "    where " +
-            "        O.return_date is NULL" +
             "   GROUP BY " +
             "   B.id ;";
 
@@ -275,9 +290,6 @@ public class Database {
     }
     
     public static boolean lendBook(int bookId, String username){
-        System.out.println(username);
-        System.out.println(bookId);
-
         var conn = Database.connect();
         try (var stmt = conn.prepareStatement("INSERT INTO borrow(book_id, user_id) VALUES(?, ?);")) {
             stmt.setInt(1, bookId);
