@@ -289,20 +289,47 @@ public class Database {
         
     }
     
-    public static boolean lendBook(int bookId, String username){
+    public static String lendBook(int bookId, String username){
         var conn = Database.connect();
+        var sql = "SELECT" +
+            "    B.*, " +
+            "    SUM(case when O.return_date is null and O.book_id is not null then 1 else 0 end) AS borrowed" +
+            "   FROM " +
+            "        books  B" +
+            "    LEFT JOIN " +
+            "        borrow  O" +
+            "    ON " +
+            "        O.book_id = B.id" +
+            "    WHERE " +
+            "        O.book_id = ?" +
+            "   GROUP BY " +
+            "   B.id ;";
+
+
+        try (var stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, bookId);
+            ResultSet st = stmt.executeQuery();
+            if (!st.next())
+                return "Book does not exist!";
+            if(st.getInt("borrowed") == st.getInt("total_count"))
+                return "All books are taken";
+
+        } catch(SQLException e){
+            return e.getMessage();
+        }
+
+
         try (var stmt = conn.prepareStatement("INSERT INTO borrow(book_id, user_id) VALUES(?, ?);")) {
             stmt.setInt(1, bookId);
             stmt.setString(2, username);
             stmt.execute();
 
-            return true;
+            return null;
         } catch(SQLException e){
             System.out.println("**********************");
             System.out.println(e.getMessage());
-            return false;
+            return e.getMessage();
         }
- 
     }
 
     public static books searchBook(String title){

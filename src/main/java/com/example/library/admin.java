@@ -1240,15 +1240,15 @@ public class admin {
         ok.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                boolean check = Database.lendBook(Integer.parseInt(book_name.getText()), student_number.getText());
-                if (check) {
+                String check = Database.lendBook(Integer.parseInt(book_name.getText()), student_number.getText());
+                if (check == null) {
                     form.close();
                     Alert error = new Alert(Alert.AlertType.INFORMATION, "Done successfully!");
                     error.setTitle("lend book");
                     error.setHeaderText("Done!");
                     error.showAndWait();
                 }else {
-                    Alert error = new Alert(Alert.AlertType.ERROR, "wrong information!\nplease check spell and try again!");
+                    Alert error = new Alert(Alert.AlertType.ERROR, check);
                     error.setTitle("lend book");
                     error.setHeaderText("Failed!");
                     error.showAndWait();
