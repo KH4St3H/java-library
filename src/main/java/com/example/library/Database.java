@@ -17,7 +17,7 @@ public class Database {
     private static final String url = "jdbc:postgresql://localhost:5432/library";
     private static final String username = "library-test";
     private static final String password = "library-test";
-    public static Connection connect(){
+    private static Connection connect(){
         try {
             return DriverManager.getConnection(url, username, password);
         }
@@ -56,7 +56,7 @@ public class Database {
                 "'admin', 'Mehrshad', 'Firouzian', ?, TRUE)", hashPassword("admin"));
     }
 
-    public static boolean execStatement(String sql){
+    private static boolean execStatement(String sql){
 
         try (var conn =  Database.connect()) {
             assert conn != null;
@@ -121,24 +121,24 @@ public class Database {
             System.out.println("Error creating users table");
             return;
         }
-        // create users table
+        // create borrow table
         sql = "create table if not exists borrow(" +
-                    "user_id INT," + 
-                    "book_id INT," +
-                    "constraint fk_user foreign KEY(user_id) references users(id) on delete CASCADE," +
-                    "constraint fk_book foreign KEY(book_id) references books(id) on delete CASCADE," +
-                    "start_data TIMESTAMP default NOW()," +
-                    "return_date TIMESTAMP";
+            "   user_id VARCHAR(30)," + 
+            "   book_id INT," +
+            "   constraint fk_user foreign KEY(user_id) references users(username) on delete CASCADE," +
+            "   constraint fk_book foreign KEY(book_id) references books(id) on delete CASCADE," +
+            "   start_data TIMESTAMP DEFAULT CURRENT_TIMESTAMP," +
+            "   return_date TIMESTAMP" +
+            ");";
            success = execStatement(sql);
         if(!success){
-            System.out.println("Error creating users table");
+            System.out.println("Error creating borrow table");
             return;
         }
     }
 
      public static boolean addUser(String stdNumber, String fullName, String level, String department, String password){
         String[] name = fullName.split(" ", 2);
-        String hashedPassword = hashPassword(password);
 
         var conn = Database.connect();
         try (var stmt = conn.prepareStatement("INSERT INTO users(username, first_name, last_name, password, department, level) VALUES(?, ?, ?, ?, ?, ?);")) {
@@ -177,18 +177,30 @@ public class Database {
         
     }
 
-    public static ObservableList<books> getAllBooks(){
+    public static ObservableList<Users> getAllUsers(){
+        var sql = "SELECT" +
+            "    B.*, " +
+            "    COUNT(O.book_id) AS borrowed" +
+            "   FROM " +
+            "        users B" +
+            "    LEFT JOIN " +
+            "        borrow  O" +
+            "    ON " +
+            "        O.user_id = B.username" +
+            "    where (" +
+            "        O.return_date is NULL" +
+            "        AND B.admin = FALSE)" +
+            "   GROUP BY " +
+            "   B.id ;";
 
-        ObservableList<books> list = FXCollections.observableArrayList();
+        ObservableList<Users> list = FXCollections.observableArrayList();
         var conn = Database.connect();
         try (var stmt = conn.createStatement()) {
-            ResultSet rs = stmt.executeQuery("SELECT id, title, author, category, total_count FROM books");
+            ResultSet rs = stmt.executeQuery(sql);
             while(rs.next()){
                 try{
-                    int totalCount = rs.getInt(5);
-                    System.out.println();
-                    list.add(new books(rs.getInt("id"), rs.getString("title"),
-                                rs.getString("author"), rs.getString("category"), totalCount, totalCount - 1));
+                    list.add(new Users(rs.getString("first_name"), rs.getString("last_name"),
+                                rs.getString("username"), rs.getString("level"), rs.getString("department"), rs.getInt("borrowed")));
                 
                 } catch (SQLException e){
                     System.out.println(e.getMessage());
@@ -201,6 +213,117 @@ public class Database {
         
     }
 
+    public static ObservableList<borrowed_books> getAllBorrowedBooks(){
+        var sql = "SELECT borrow.*, books.title FROM borrow LEFT JOIN books ON books.id = borrow.book_id ORDER BY start_date";
+
+        ObservableList<borrowed_books> list = FXCollections.observableArrayList();
+        var conn = Database.connect();
+        try (var stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery(sql);
+            while(rs.next()){
+                try{
+                    list.add(new borrowed_books(rs.getInt("book_id"), rs.getString("title"),
+                                rs.getString("user_id"), rs.getString("start_date"), rs.getString("return_date")));
+                
+                } catch (SQLException e){
+                    System.out.println(e.getMessage());
+                }
+            }
+        } catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return list;
+        
+    }
+
+    public static ObservableList<books> getAllBooks(){
+        var sql = "SELECT" +
+            "    B.*, " +
+            "    COUNT(O.user_id) AS borrowed" +
+            "   FROM " +
+            "        books  B" +
+            "    LEFT JOIN " +
+            "        borrow  O" +
+            "    ON " +
+            "        O.book_id = B.id" +
+            "    where " +
+            "        O.return_date is NULL" +
+            "   GROUP BY " +
+            "   B.id ;";
+
+        ObservableList<books> list = FXCollections.observableArrayList();
+        var conn = Database.connect();
+        try (var stmt = conn.createStatement()) {
+            ResultSet rs = stmt.executeQuery(sql);
+            while(rs.next()){
+                try{
+                    int totalCount = rs.getInt("total_count");
+                    int borrowed = rs.getInt("borrowed");
+                    System.out.println();
+                    list.add(new books(rs.getInt("id"), rs.getString("title"),
+                                rs.getString("author"), rs.getString("category"), totalCount - borrowed, borrowed));
+                
+                } catch (SQLException e){
+                    System.out.println(e.getMessage());
+                }
+            }
+        } catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        return list;
+        
+    }
+    
+    public static boolean lendBook(int bookId, String username){
+        System.out.println(username);
+        System.out.println(bookId);
+
+        var conn = Database.connect();
+        try (var stmt = conn.prepareStatement("INSERT INTO borrow(book_id, user_id) VALUES(?, ?);")) {
+            stmt.setInt(1, bookId);
+            stmt.setString(2, username);
+            stmt.execute();
+
+            return true;
+        } catch(SQLException e){
+            System.out.println("**********************");
+            System.out.println(e.getMessage());
+            return false;
+        }
+ 
+    }
+
+    public static books searchBook(String title){
+        String[] args = {title};
+
+        var conn = Database.connect();
+        try (var stmt = conn.prepareStatement("SELECT * FROM users WHERE (title LIKE '%?%')")) {
+            for (int i = 0; i <args.length; i++) {
+                stmt.setString(i+1, args[i]);
+            }
+            var rs = stmt.executeQuery();
+            rs.next();
+            try{
+
+                // String firstName = rs.getString("first_name");
+                // System.out.println(firstName);
+
+              // books(int Id, String Name, String author, String Category, int available, int lent);
+                int count = rs.getInt("total_count");
+
+
+
+                return new books(rs.getInt("id"), rs.getString("title"), rs.getString("author"), rs.getString("category"), count, count);
+            
+            } catch (SQLException e){
+                System.out.println(e.getMessage());
+                return null;
+            }
+        } catch(SQLException e){
+            return null;
+        }
+        
+    }
     
     public static User login(String username, String password){
         String[] args = {username, password};

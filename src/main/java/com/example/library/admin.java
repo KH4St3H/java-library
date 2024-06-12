@@ -761,50 +761,44 @@ public class admin {
                     Failed.setTitle("add user");
                     Failed.setHeaderText("Failed!");
                     Failed.showAndWait();
-                }else if (!file.check_existance("src/main/resources/datas/users.txt", stdnumber.getText(), 1)){
-                    if (!password.getText().equals(confirm.getText())) {
-                        Alert alert = new Alert(Alert.AlertType.ERROR, "Password does not match confirmation");
-                        alert.setHeaderText("Failed!");
-                        alert.setTitle("add user");
-                        alert.showAndWait();
-                    } else {
-                        if (computer.isSelected()) {
-                            dep = "Computer Engineering";
-                        } else if (electrical.isSelected()) {
-                            dep = "Electrical Engineering";
-                        } else {
-                            dep = "Basic Sciences";
-                        }
+                    return;
+                }
+                if (!password.getText().equals(confirm.getText())) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Password does not match confirmation");
+                    alert.setHeaderText("Failed!");
+                    alert.setTitle("add user");
+                    alert.showAndWait();
+                    return;
+                }
+                if (computer.isSelected()) {
+                    dep = "Computer Engineering";
+                } else if (electrical.isSelected()) {
+                    dep = "Electrical Engineering";
+                } else {
+                    dep = "Basic Sciences";
+                }
 
-                        if (undergraduate.isSelected()) {
-                            lev = "Undergraduate";
-                        } else if (masters.isSelected()) {
-                            lev = "Masters";
-                        } else {
-                            lev = "P.H.D";
-                        }
+                if (undergraduate.isSelected()) {
+                    lev = "Undergraduate";
+                } else if (masters.isSelected()) {
+                    lev = "Masters";
+                } else {
+                    lev = "P.H.D";
+                }
 
-                        boolean success = Database.addUser(stdnumber.getText(), name.getText(), lev, dep, password.getText());
+                boolean success = Database.addUser(stdnumber.getText(), name.getText(), lev, dep, password.getText());
 
-                        if(success){
-                        Alert successful = new Alert(Alert.AlertType.INFORMATION, "User added successfully.");
-                            successful.setTitle("add user");
-                            successful.setHeaderText("Done!");
-                            successful.show();
-                        } else {
-                            Alert alert = new Alert(Alert.AlertType.ERROR, "Something went wrong!");
-                            alert.setHeaderText("Failed!");
-                            alert.setTitle("add user");
-                            alert.showAndWait();
-                        }
-                    }
-                }else {
-                    Alert alert = new Alert(Alert.AlertType.ERROR, "Sorry, user with this student number already exists!");
+                if(success){
+                    Alert successful = new Alert(Alert.AlertType.INFORMATION, "User added successfully.");
+                    successful.setTitle("add user");
+                    successful.setHeaderText("Done!");
+                    successful.show();
+                } else {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Something went wrong!");
                     alert.setHeaderText("Failed!");
                     alert.setTitle("add user");
                     alert.showAndWait();
                 }
-
             }
         });
 
@@ -1107,7 +1101,7 @@ public class admin {
         r.setFill(new ImagePattern(background));
 
         TextField book_name = new TextField();
-        book_name.setPromptText("book name");
+        book_name.setPromptText("book id");
         book_name.setLayoutY(85);
         book_name.setLayoutX(135);
         book_name.setMinSize(330, 70);
@@ -1246,26 +1240,20 @@ public class admin {
         ok.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if (!file.check_existance("src/main/resources/datas/borrowed books.txt", book_name.getText(), 0)){
-                    boolean check = books.lendbook(book_name.getText(), student_number.getText());
-                    if (check) {
-                        form.close();
-                        Alert error = new Alert(Alert.AlertType.INFORMATION, "Done successfully!");
-                        error.setTitle("lend book");
-                        error.setHeaderText("Done!");
-                        error.showAndWait();
-                    }else {
-                        Alert error = new Alert(Alert.AlertType.ERROR, "wrong information!\nplease check spell and try again!");
-                        error.setTitle("lend book");
-                        error.setHeaderText("Failed!");
-                        error.showAndWait();
-                    }
+                boolean check = Database.lendBook(Integer.parseInt(book_name.getText()), student_number.getText());
+                if (check) {
+                    form.close();
+                    Alert error = new Alert(Alert.AlertType.INFORMATION, "Done successfully!");
+                    error.setTitle("lend book");
+                    error.setHeaderText("Done!");
+                    error.showAndWait();
                 }else {
-                    Alert error = new Alert(Alert.AlertType.ERROR, "Sorry, this book isn't available!");
+                    Alert error = new Alert(Alert.AlertType.ERROR, "wrong information!\nplease check spell and try again!");
                     error.setTitle("lend book");
                     error.setHeaderText("Failed!");
                     error.showAndWait();
                 }
+
             }
         });
 

@@ -13,14 +13,19 @@ public class borrowed_books {
     private String person;
     private String s_date;
     private String e_date;
+    private int id;
 
-    public borrowed_books(String Name, String Person, String S_date, String E_date) {
+    public borrowed_books(int id, String Name, String Person, String S_date, String E_date) {
+        this.id = id;
         this.name = Name;
         this.person = Person;
         this.s_date = S_date;
         this.e_date = E_date;
     }
 
+    public int getId(){
+        return id;
+    }
     public String getE_date() {
         return e_date;
     }
@@ -40,6 +45,11 @@ public class borrowed_books {
     public static TableView borrowed_books_table(){
         TableView b_books_table = new TableView<>();
 
+        TableColumn id = new TableColumn<>("Book ID");
+        id.setStyle("""
+                -fx-alignment: CENTER;
+                """);
+
         TableColumn name = new TableColumn<>("Name");
         name.setStyle("""
                 -fx-alignment: CENTER;
@@ -56,22 +66,13 @@ public class borrowed_books {
         enddate.setStyle("""
                 -fx-alignment: CENTER;
                 """);
+        id.setCellValueFactory(new PropertyValueFactory<borrowed_books, Integer>("id"));
         name.setCellValueFactory(new PropertyValueFactory<borrowed_books, String>("name"));
         user.setCellValueFactory(new PropertyValueFactory<borrowed_books, String>("person"));
         stardate.setCellValueFactory(new PropertyValueFactory<borrowed_books, String>("s_date"));
         enddate.setCellValueFactory(new PropertyValueFactory<borrowed_books, String>("e_date"));
 
-        name.prefWidthProperty().bind(b_books_table.widthProperty().multiply(0.4));
-        user.prefWidthProperty().bind(b_books_table.widthProperty().multiply(0.2));
-        stardate.prefWidthProperty().bind(b_books_table.widthProperty().multiply(0.2));
-        enddate.prefWidthProperty().bind(b_books_table.widthProperty().multiply(0.2));
-
-        name.setResizable(false);
-        user.setResizable(false);
-        stardate.setResizable(false);
-        enddate.setResizable(false);
-
-        b_books_table.getColumns().addAll(name, user, stardate, enddate);
+        b_books_table.getColumns().addAll(id, name, user, stardate, enddate);
 
         b_books_table.setLayoutX(375);
         b_books_table.setLayoutY(210);
@@ -81,13 +82,7 @@ public class borrowed_books {
                 -fx-background-color: unset;
                 """);
 
-        ArrayList<String> data = file.reader("src/main/resources/datas/borrowed books.txt");
-        ObservableList<borrowed_books> temp = FXCollections.observableArrayList();
-        for (String datum : data) {
-            String[] n = datum.split("\\|");
-            temp.add(new borrowed_books(n[0], n[1], n[2], n[3]));
-        }
-        b_books_table.setItems(temp);
+        b_books_table.setItems(Database.getAllBorrowedBooks());
         return b_books_table;
     }
 
@@ -140,7 +135,7 @@ public class borrowed_books {
         for (String datum : data) {
             String[] n = datum.split("\\|");
             if (n[1].equals(username)){
-                temp.add(new borrowed_books(n[0], n[1], n[2], n[3]));
+                temp.add(new borrowed_books(1, n[0], n[1], n[2], n[3]));
             }
         }
         b_books_table.setItems(temp);

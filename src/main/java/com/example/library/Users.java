@@ -25,21 +25,24 @@ import java.util.ArrayList;
 
 public class Users {
     private String stdNumber;
-    private String name;
+    private String firstName;
+    private String lastName;
     private String level;
     private String department;
-    private String password;
+    private int booksInHand;
 
-    public Users(String Name, String Stdnumber, String Level, String Department, String Password){
+    public Users(String firstName, String lastName, String Stdnumber, String Level, String Department, int booksInHand){
         this.stdNumber = Stdnumber;
-        this.name = Name;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.level = Level;
         this.department = Department;
-        this.password = Password;
+        this.booksInHand = booksInHand;
+
     }
 
-    public String getPassword() {
-        return password;
+    public int getBooksInHand() {
+        return booksInHand;
     }
 
     public String getDepartment() {
@@ -50,31 +53,31 @@ public class Users {
         return level;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 
     public String getStdNumber() {
         return stdNumber;
     }
 
-    public static void AddUser(String stdNum, String name, String level, String department, String password){
-        try {
-            FileWriter save = new FileWriter("src/main/resources/datas/users.txt", true);
-            save.write(name + "|" + stdNum + "|" + level + "|" + department + "|" + password + "\n");
-            save.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static TableView user_table(){
         TableView user_table = new TableView<>();
 
-        TableColumn name = new TableColumn<>("Name");
-        name.setStyle("""
+        TableColumn firstname = new TableColumn<>("First Name");
+        firstname.setStyle("""
                 -fx-alignment: CENTER;
                 """);
+
+        TableColumn lastname = new TableColumn<>("Last Name");
+        lastname.setStyle("""
+                -fx-alignment: CENTER;
+                """);
+
         TableColumn Std_num = new TableColumn<>("Student Number");
         Std_num.setStyle("""
                 -fx-alignment: CENTER;
@@ -87,30 +90,18 @@ public class Users {
         depart.setStyle("""
                 -fx-alignment: CENTER;
                 """);
-        TableColumn pass = new TableColumn<>("Password");
+        TableColumn pass = new TableColumn<>("Book borrowed");
         pass.setStyle("""
                 -fx-alignment: CENTER;
                 """);
 
-        name.setCellValueFactory(new PropertyValueFactory<Users, String>("name"));
+        firstname.setCellValueFactory(new PropertyValueFactory<Users, String>("firstName"));
+        lastname.setCellValueFactory(new PropertyValueFactory<Users, String>("lastName"));
         Std_num.setCellValueFactory(new PropertyValueFactory<Users, String>("stdNumber"));
         Lev.setCellValueFactory(new PropertyValueFactory<Users, String>("level"));
         depart.setCellValueFactory(new PropertyValueFactory<Users, String>("department"));
-        pass.setCellValueFactory(new PropertyValueFactory<Users, String>("password"));
-
-        name.prefWidthProperty().bind(user_table.widthProperty().multiply(0.2));
-        Std_num.prefWidthProperty().bind(user_table.widthProperty().multiply(0.2));
-        Lev.prefWidthProperty().bind(user_table.widthProperty().multiply(0.2));
-        depart.prefWidthProperty().bind(user_table.widthProperty().multiply(0.2));
-        pass.prefWidthProperty().bind(user_table.widthProperty().multiply(0.2));
-
-        name.setResizable(false);
-        Std_num.setResizable(false);
-        Lev.setResizable(false);
-        depart.setResizable(false);
-        pass.setResizable(false);
-
-        user_table.getColumns().addAll(name, Std_num, Lev, depart, pass);
+        pass.setCellValueFactory(new PropertyValueFactory<Users, Integer>("booksInHand"));
+        user_table.getColumns().addAll(firstname, lastname, Std_num, Lev, depart, pass);
 
         user_table.setLayoutX(375);
         user_table.setLayoutY(210);
@@ -120,14 +111,8 @@ public class Users {
                 -fx-background-color: unset;
                 """);
 
-        ArrayList<String> data = file.reader("src/main/resources/datas/users.txt");
-        ObservableList<Users> list = FXCollections.observableArrayList();
-        for (String datum : data) {
-            String[] n = datum.split("\\|");
-            System.out.println(datum);
-            list.add(new Users(n[0], n[1], n[2], n[3], n[4]));
-        }
-        user_table.setItems(list);
+
+        user_table.setItems(Database.getAllUsers());
         return user_table;
     }
 
